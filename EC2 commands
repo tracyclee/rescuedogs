@@ -1,0 +1,8 @@
+EC2 commands
+
+from downloads folder
+
+sudo ssh -l ubuntu -i /.ssh/dogs.pem ec2-54-85-3-57.compute-1.amazonaws.com
+
+
+sudo scp -i /.ssh/dogs.pem -r ubuntu@ec2-54-85-3-57.compute-1.amazonaws.com:/home/ubuntu/Notebooks/raw_dogs/ /Users/tracylee/raw_dogs/ec2
