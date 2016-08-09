@@ -191,9 +191,23 @@ def fill_na_mean(df, fields):
         df[field].fillna(df[field].mean(), inplace=True)
     return df
 
+def fill_na_mode(df, fields):
+    for field in fields:
+        df[field].fillna(df[field].mode(), inplace=True)
+    return df
+
 def fill_na_10000(df, fields):
     for field in fields:
         df[field].fillna(10000, inplace=True)
+    return df
+
+def fill_with_unknown(df):
+    fill_with_unknown= ['animalActivityLevel', u'animalGeneralAge', u'animalGeneralSizePotential',
+            u'animalIndoorOutdoor',u'animalNewPeople',
+            u'animalPrimaryBreed',
+           u'animalSecondaryBreed']
+    for field in fill_with_unknown:
+        df[field].fillna("Unknown", inplace=True)
     return df
 
 
@@ -206,10 +220,9 @@ if __name__ == '__main__':
     df = labels(df)
 
     df['animalBirthdate'] = df['animalBirthdate'].apply(lambda x: date_time(x))
-
-    df = dummify(df, ['animalAltered', 'animalDeclawed' 'animalIndoorOutdoor','animalNewPeople'])
-    df = add_unknown_column(df, ['animalHousetrained', 'animalMixedBreed', 'animalOKWithCats',
-                            'animalOKWithDogs', 'animalOKWithKids', 'animalSpecialneeds', 'animalUptodate'])
+    # df = dummify(df, ['animalAltered', 'animalDeclawed' 'animalIndoorOutdoor','animalNewPeople'])
+    # df = add_unknown_column(df, ['animalHousetrained', 'animalMixedBreed', 'animalOKWithCats',
+    #                         'animalOKWithDogs', 'animalOKWithKids', 'animalSpecialneeds', 'animalUptodate'])
     df = fill_na_mean(df, ['animalNumPictures', 'animalNumVideos'])
     df = fill_na_10000(df, ['animalSizeCurrent', 'animalSizePotential'])
     df['mostly_black'] = df['animalColor'].apply(lambda x: 1 if str(x)[:5]=='Black' else 0)

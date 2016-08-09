@@ -3,6 +3,19 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.cross_validation import train_test_split, cross_val_score
 
+
+
+def feature_importances():
+    plt.figure()
+    plt.title("Feature importances")
+    plt.bar(range(10), importances[indices[-10:]], color="r", align="center")
+    plt.xticks(range(10), df.columns[indices][-10:])
+    plt.xticks(rotation=60)
+    plt.xlim([-1, 10])
+    plt.show()
+
+if __name__ == '__main__':
+
 df = pd.read_csv('/Users/tracylee/raw_dogs/clean_without_text.csv')
 df = df[df['adopted']==1]
 df.drop(['adopted','censored', 'tempAge', 'has_url', 'sex_male',

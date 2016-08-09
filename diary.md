@@ -25,3 +25,16 @@ Saturday:
 - dummifying data:
   - activity level: filled in nans with moderately active
   - adoption fee: regexed for values; took sums
+
+Sunday:
+- doing tons of stuff in R
+- survival curves
+  - best fields: [animalAltered + animalMicrochipped + animalOKWithDogs +
+                  in_foster + animalMixedBreed + animalActivityLevel +
+                  animalGeneralAge + animalGeneralSizePotential + animalNewPeople +
+                  animalIndoorOutdoor + animalNumPictures + animalNumVideos + animalAdoptionFee]
+
+Monday:
+- looking at Cox evaluations; residuals; AIC
+- zph validation of assumptions
+- changed the data some more
