@@ -38,3 +38,17 @@ Monday:
 - looking at Cox evaluations; residuals; AIC
 - zph validation of assumptions
 - changed the data some more
+- added latent topics
+- binned states
+
+Tuesday:
+- what myths can I examine?
+  - all the dogs are old
+  - adoption fees are too expensive
+  - there are no purebreds
+  - big dogs are worse with kids
+  - difficult to adopt groups?
+    - senior dogs
+    - pit bull
+    - special needs
+    - black dogs

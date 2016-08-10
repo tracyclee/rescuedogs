@@ -26,6 +26,87 @@ def plot_breed_trends(df):
     plt.xticks(rotation=60)
     plt.show()
 
+def plot_pitbull(df):
+    plt.subplots(figsize=(15, 8))
+    lst = [df['time_range'], df[df['pitbull']==1]['time_range'], df[df['pitbull']==0]['time_range']]
+    plt.boxplot(lst, labels=['All', 'Pit Bull Family', 'Other'])
+    plt.ylim(0, 1500)
+    plt.ylabel('Adoption time', fontsize=20)
+    plt.title('Time By Family', fontsize=24)
+    plt.xticks(fontsize=14)
+    plt.show()
+
+def plot_color_trends(df):
+    plt.subplots(figsize=(15, 8))
+    lst = [df['time_range'], df[df['mostly_black']==1]['time_range'], df[df['mostly_black']==0]['time_range']]
+    plt.boxplot(lst, labels=['All', 'Black', 'Other Color'])
+    plt.ylim(0, 1500)
+    plt.ylabel('Adoption time', fontsize=20)
+    plt.title('Time By Color', fontsize=24)
+    plt.xticks(fontsize=14)
+
+def plot_all_region_trends(df):
+    region_names = ['West', 'Midwest', 'South', 'Northeast', 'Canada']
+    regions = ["{}\n{}".format(region, df[df['region']==region]['time_range'].count())
+               for region in region_names]
+    plt.subplots(figsize=(15, 8))
+    lst = [df[df['region']==region]['time_range'] for region in region_names]
+    plt.boxplot(lst, labels=regions)
+    plt.ylim(0, 2500)
+    plt.xlabel('Region and Number of Records',fontsize=20)
+    plt.ylabel('Adoption time', fontsize=20)
+    plt.title('Time By Region', fontsize=24)
+    plt.xticks(fontsize=14)
+    plt.show()
+
+def plot_one_region(df, region_name, region_states):
+    regions = ["{}\n{}".format(region, df[df['animalLocationState']==region]['time_range'].count())
+               for region in region_states]
+    plt.subplots(figsize=(15, 8))
+    lst = [df[df['animalLocationState']==region]['time_range'] for region in region_states]
+    plt.boxplot(lst, labels=regions)
+    plt.ylim(0, 2500)
+    plt.ylabel('Adoption time', fontsize=20)
+    plt.xlabel('State and Number of Records',fontsize=20)
+    plt.title('Time By States in {}'.format(region_name), fontsize=24)
+    plt.xticks(fontsize=14)
+    plt.show()
+
+def plot_age_groups(df):
+    objects = ['Baby', 'Young', 'Adult', 'Senior', 'Unknown']
+    y_pos = np.arange(len(objects))
+    performance = [1.*(df['animalGeneralAge']==object).sum()/df.shape[0] for object in objects]
+
+    plt.subplots(figsize=(15, 8))
+    plt.bar(y_pos, performance, align='center', alpha=0.5)
+    plt.xticks(y_pos, objects, fontsize=20)
+    plt.yticks(fontsize=14)
+    plt.ylabel('Percent of Observations', fontsize=20)
+    plt.title('Age Groups', fontsize=24)
+
+def median_records_scatter(df):
+    df['animalLocationState'] = df['animalLocationState']
+    temp = df[['animalOrgID','animalLocationState','time_range']].groupby(['animalOrgID','animalLocationState',]).agg(['median', 'count'])
+    temp = temp.reset_index()
+    org = temp['animalOrgID']
+    state = temp['animalLocationState']
+    mean = temp['time_range','median']
+    count = temp['time_range','count']
+
+    colors = pd.tools.plotting._get_standard_colors(len(temp['animalLocationState'].unique()), color_type='random')
+    fig, ax = plt.subplots(figsize=(15, 8))
+    plt.xlim(0, 500)
+    plt.ylim(0, 3500)
+    plt.ylabel('Median Adoption Time', fontsize=20)
+    plt.xlabel('Number of Records',fontsize=20)
+    plt.title('', fontsize=24)
+    plt.scatter(count,mean, s = count, c=colors, alpha=.4)
+    ax.set_color_cycle(colors)
+    for i, txt in enumerate(state):
+        if count[i] > 300 and mean[i] < 200:
+            ax.annotate(txt, (count[i],mean[i]))
+        elif count[i] > 200 and mean[i] > 200:
+            ax.annotate(txt, (count[i],mean[i]))
 
 
 if __name__ == '__main__':

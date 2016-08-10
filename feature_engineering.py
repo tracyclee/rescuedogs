@@ -210,6 +210,25 @@ def fill_with_unknown(df):
         df[field].fillna("Unknown", inplace=True)
     return df
 
+def state_to_region(x):
+    West = ['CA','UT','WY','MT', 'OR','WA',
+            'CO','AZ','NM','NV', 'AK', 'ID']
+    Midwest = ['IL','MI','IN','MO', 'MN','KS',
+              'OH','ND','WI', 'IA', 'SD','NE']
+    South = ['TX','NC','MD', 'WV', 'KY', 'TN',
+            'DE', 'OK','FL','LA', 'VA','SC',
+            'GA', 'AL','AR','MS','DC']
+    Northeast = ['PA','VT','NY','MA','NJ', 'RI',
+                'ME','CT','NH']
+    Canada = ['NS', 'ON', 'QC','AB','BC']
+    Territory = ['VI','PR']
+
+    region_names = ['West', 'Midwest', 'South', 'Northeast', 'Canada', 'Territory']
+    regions = [West, Midwest, South, Northeast, Canada, Territory]
+    for i, region in enumerate(regions):
+        if x in region:
+            return region_names[i]
+
 
 
 if __name__ == '__main__':
@@ -226,3 +245,4 @@ if __name__ == '__main__':
     df = fill_na_mean(df, ['animalNumPictures', 'animalNumVideos'])
     df = fill_na_10000(df, ['animalSizeCurrent', 'animalSizePotential'])
     df['mostly_black'] = df['animalColor'].apply(lambda x: 1 if str(x)[:5]=='Black' else 0)
+    df['region'] = df['animalLocationState'].apply(lambda x: state_to_region(x))
