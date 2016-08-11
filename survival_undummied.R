@@ -138,11 +138,15 @@ summary(dogs)
 # total survival curve
 dogs.surv <- survfit(Surv(time_range, adopted)~ 1, conf.type="none")
 ggsurv(dogs.surv, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+abline(h=.3, lty = 2, col = 3)
 title(main="Rescue Dog Survival Curve")
 
 #limit to 1 year
-plot(dogs.surv, xlab="Days Available", ylab="Percent Remaining", xlim=c(0,365))
+ggsurv(dogs.surv, xlab="Days Available", ylab="Percent Remaining", xlim=c(0,365))
+abline(h=.27, lty = 2, col = 3)
 title(main="Rescue Dog Survival Curve Within 1 Year")
+
+##save the plot as a variable and then use CoordCartesian
 
 
 dogs$survival <- Surv(dogs$time_range, dogs$adopted)
@@ -277,6 +281,25 @@ legend(
 fit <- survfit(survival ~ mostly_black, data = dogs)
 ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
 
+#Bad to be a Pitbull
+fit <- survfit(survival ~ Pitbull , data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#bad, because includes pit bulls
+fit <- survfit(survival ~ Terrier, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#people love bounds
+fit <- survfit(survival ~ Hound, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#not a huge difference
+fit <- survfit(survival ~ Working, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#no difference at all
+fit <- survfit(survival ~ Herding, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
 
 
 names(dogs)
@@ -342,13 +365,13 @@ results <- coxph(survival ~  animalAdoptionFee + animalAltered +
                    animalBiggestPictures +  animalGeneralAge + animalGeneralSizePotential +
                    animalHousetrained + animalIndoorOutdoor + 
                    animalMicrochipped+ animalNeedsFoster +
-                   animalNewPeople + animalNumPictures + animalNumVideos +
+                   animalNewPeople + animalNumPictures.cut + animalNumVideos +
                    animalOKWithDogs + animalOKWithKids +
                   animalSex + animalSizeCurrent +
                   animalSpecialneeds + animalUptodate +
                    age_at_start + in_foster +
                    description_length + desc_latent_topic
-                 + region + has_video + pitbull, data = dogs)
+                 + region + has_video + pitbull + Hound + Working + Herding + Terrier, data = dogs)
 summary(results)
 extractAIC(results)
 

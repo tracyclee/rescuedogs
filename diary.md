@@ -62,25 +62,46 @@ Wednesday:
     which collects from rescue groups and shelters all across the country. I had hoped that
     I could derive some insights from the data that might help benefit the millions of animals
     that enter shelters every year, because I love dogs. In fact, my own dog Tess was a shelter dog
-    who would have been euthanized if I hadn't adopted her, so I feel very strongly about this topic.
+    who would have been euthanized if I hadn't adopted her. They say when you adopt a dog, you save a life,
+    and that's not an exaggeration.
+        *show picture of Tess???*
 
     I refined my focus to only one species--dogs--in this first pass, partially because there were more records
     for dogs, but mostly because I just love dogs the most.
-    *show picture of Tess???*
+
 
   Process:
     - I approached this problem with survival analysis (also called duration analysis or accelerated life models) in mind. The top 3 reasons dogs are euthanized are illness, aggression, and space--and space is a constraint
     that can be alleviated through increasing animal turnaround. So I asked myself--how can we improve the adoptability
     of these dogs? What are the major relevant factors impacting the amount of time a dog will be up for adoption?
 
+    Survival analysis, in brief, encompasses a number of models that analyze how long it will take until an event occurs. Often, that event is death--hence survival--but can also be used to measure the amount of time until a paved road cracks, until a person finds employment, or until a piece of equipment will wear out. In my case, the event is adoption.
+
+    In modeling duration, the data was challenging. The API I pulled from contains 141 fields--even being as detailed as describing whether or not the dog is goofy--but were largely riddled with null values. Even more painful is that for me to model duration, I needed clear start and end dates for the dogs, which were usually null. After manually examining all fields and pulling all data through multiple EC2 instances, I was left with about 150,000 usable records with definite durations.
+
     *show survival curve*
 
+    I started by modeling the survival curves of my datadogs through Kaplan-Meier estimates. Kaplan-Meier is a non-parametric model of the time to event, whose advantage lies in its incorporation of censored data. Data is censored if at the time of analysis, the event has not yet occurred--these would be my dogs who are still available. Although we don't know when these dogs will be adopted, we know that they haven't been adopted yet, which still can aid in our predictions.
+
+    This survival curve plots the probability that of duration exceeding a specific time. For example, in this curve, about 73% of dogs are expected to be adopted within a year of being up for adoption.
 
     I initially started with some exploratory data analysis and followed my intuition about some of the factors
     that I thought would be most relevant to the topic. to see if I could confirm or disprove
     some of the beliefs about dog adoption.  
 
-    For starters, 
+
+
+try some suspicions about good bad shelters
+couple good, couple bad`
+rename  all columns
+combine some dummies
+play with random forest
+
+
+
+
+
+    For starters,
   Results:
 
   Next Steps:
