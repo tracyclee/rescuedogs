@@ -229,13 +229,38 @@ def state_to_region(x):
         if x in region:
             return region_names[i]
 
+def breed_groups(df):
+    df['pitbull']=df[u'animalBreed'].apply(lambda x: 1 if 'pit bull' in x.lower()
+                                                   else 1 if 'bull terrier' in x.lower()
+                                                   else 1 if 'staffordshire' in x.lower()
+                                                   else 1 if 'american bulldog' in x.lower()
+                                                   else 1 if 'bully' in x.lower()
+                                                   else 0)
+    df['Terrier']=df[u'animalBreed'].apply(lambda x: 1 if 'terrier' in x.lower()
+                                                   else 0)
+    df['Hound']=df[u'animalBreed'].apply(lambda x: 1 if 'hound' in x.lower()
+                                                     else 1 if 'hund' in x.lower()
+                                                       else 0)
+    df['Herding']=df[u'animalBreed'].apply(lambda x: 1 if 'herd' in x.lower()
+                                                     else 1 if 'shep' in x.lower()
+                                                    else 1 if 'sheep' in x.lower()
+                                                       else 1 if 'corgi' in x.lower()
+                                                       else 1 if 'collie' in x.lower()
+                                                       else 0)
+    df['Working']=df[u'animalBreed'].apply(lambda x: 1 if 'retriever' in x.lower()
+                                                     else 1 if 'setter' in x.lower()
+                                                    else 1 if 'spaniel' in x.lower()
+                                                       else 1 if 'pointer' in x.lower()
+                                                       else 0)
+    return df
+
 
 
 if __name__ == '__main__':
     df = load_data()
     orgs_of_interest = orgs_of_interest(df)
     df = start_end_date(df)
-    df = impute_dates_all(df, orgs_of_interest)
+    # df = impute_dates_all(df, orgs_of_interest)
     df = labels(df)
 
     df['animalBirthdate'] = df['animalBirthdate'].apply(lambda x: date_time(x))
@@ -246,3 +271,5 @@ if __name__ == '__main__':
     df = fill_na_10000(df, ['animalSizeCurrent', 'animalSizePotential'])
     df['mostly_black'] = df['animalColor'].apply(lambda x: 1 if str(x)[:5]=='Black' else 0)
     df['region'] = df['animalLocationState'].apply(lambda x: state_to_region(x))
+    df['search_string_num_terms'] = df['animalSearchString'].apply(lambda x: len(str(x).split()))
+    df['description_length'] = df['animalDescriptionPlain'].apply(lambda x: len(str(x)))

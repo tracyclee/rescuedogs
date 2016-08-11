@@ -1,206 +1,8 @@
 #load library
 library(survival)
+library(ggplot2)
 
-#load data
-dogs <- read.csv('/Users/tracylee/raw_dogs/clean_data_no_dummies.csv')
-attach(dogs)
-
-summary(dogs)
-
-# total survival curve
-dogs.surv <- survfit(Surv(time_range, adopted)~ 1, conf.type="none")
-ggsurv(dogs.surv, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-title(main="Rescue Dog Survival Curve")
-
-#limit to 1 year
-plot(dogs.surv, xlab="Days Available", ylab="Percent Remaining", xlim=c(0,365))
-title(main="Rescue Dog Survival Curve Within 1 Year")
-
-
-dogs$survival <- Surv(dogs$time_range, dogs$adopted)
-
-#altered curves - kinda different
-fit <- survfit(survival ~ animalAltered, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#declawed curves - kinda different; declawed too low should expunge
-fit <- survfit(survival ~ animalDeclawed, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#housetrained curves - no difference
-fit <- survfit(survival ~ animalHousetrained, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#microchipped curves - huge difference = most likely indicates a dog that has an owner who will come looking for him/her
-fit <- survfit(survival ~ animalMicrochipped, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#ok with cats curves - no difference
-fit <- survfit(survival ~ animalOKWithCats, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#ok with dogs curves - significant difference
-fit <- survfit(survival ~ animalOKWithDogs, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#ok with kids curves - little difference
-fit <- survfit(survival ~ animalOKWithKids, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#specialneeds curves - little difference
-fit <- survfit(survival ~ animalSpecialneeds, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#in foster curves - some difference
-fit <- survfit(survival ~ in_foster , data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#mixedbreed curves - initially no difference
-fit <- survfit(survival ~ animalMixedBreed, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#needs foster curves - little difference
-fit <- survfit(survival ~ animalNeedsFoster, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-#activity curves -  difference - sedentary is bad
-fit <- survfit(survival ~ animalActivityLevel, data = dogs)
-plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
-legend(
-  "topright",
-  legend=unique(animalActivityLevel),
-  lty=1:5,
-  col=2:6,
-  horiz=FALSE,
-  bty='n')
-
-#agegroup curves - difference in first 100 days
-fit <- survfit(survival ~ animalGeneralAge, data = dogs)
-plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
-legend(
-  "topright",
-  legend=unique(animalGeneralAge),
-  lty=1:5,
-  col=2:6,
-  horiz=FALSE,
-  bty='n')
-
-#sizegroup curves - some difference; people really like medium dogs
-fit <- survfit(survival ~ animalGeneralSizePotential, data = dogs)
-plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
-legend(
-  "topright",
-  legend=unique(animalGeneralSizePotential),
-  lty=1:5,
-  col=2:6,
-  horiz=FALSE,
-  bty='n')
-
-#newpeople curves - huge difference 
-fit <- survfit(survival ~ animalNewPeople, data = dogs)
-plot(fit, lty=1, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
-legend(
-  "topright",
-  legend=unique(animalNewPeople),
-  lty=1,
-  col=2:6,
-  horiz=FALSE,
-  bty='n')
-
-#indoor outdoor curves - huge difference 
-fit <- survfit(survival ~ animalIndoorOutdoor, data = dogs)
-plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
-legend(
-  "topright",
-  legend=unique(animalIndoorOutdoor),
-  lty=1:5,
-  col=2:6,
-  horiz=FALSE,
-  bty='n')
-
-#gender curves - literally no difference 
-fit <- survfit(survival ~ animalSex, data = dogs)
-ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
-
-names(dogs)
-
-#discretizing data
-dogs$animalBiggestPictures.cut <- cut(animalBiggestPictures, 
-                                      breaks=unique(quantile(animalBiggestPictures, probs=seq(0,1,.25),include.lowest=T, na.rm=T)))
-dogs$animalBiggestVideos.cut <- (dogs$animalBiggestVideos>0)+0
-dogs$description_length.cut <- cut(description_length, 
-                                   breaks=unique(quantile(description_length, probs=c(0,.5,.75,1),include.lowest=T)))
-
-#having high quality images helps
-ggsurv(survfit(survival ~ animalBiggestPictures.cut , data=dogs), plot.cens=F)
-
-# this field probably doesnt help
-ggsurv(survfit(survival ~ animalBiggestVideos.cut , data=dogs), plot.cens=F)
-
-# there may be a sweet spot for description length
-ggsurv(survfit(survival ~ description_length.cut , data=dogs), plot.cens=F)
-
-
-
-#num search terms seems insignificant
-dogs$search_string_num_terms.cut <- cut(search_string_num_terms, 
-                                   breaks=unique(quantile(search_string_num_terms, probs=c(0,.5,.75,1),include.lowest=T)))
-ggsurv(survfit(survival ~ search_string_num_terms.cut , data=dogs), plot.cens=F)
-
-#more pictures significantly improves adoption time
-dogs$animalNumPictures.cut <- cut(animalNumPictures, 
-                                        breaks=unique(quantile(animalNumPictures, probs=c(0,.5,.75,1),include.lowest=T, na.rm=T)))
-ggsurv(survfit(survival ~ animalNumPictures.cut , data=dogs), plot.cens=F)
-
-
-#having a video really helps
-dogs$animalNumVideos.cut <- cut(animalNumVideos, 
-                                  breaks=c(-1,0,8))
-ggsurv(survfit(survival ~ animalNumVideos.cut , data=dogs), plot.cens=F)
-
-
-#more pictures significantly improves adoption time
-dogs$animalAdoptionFee.cut <- cut(animalAdoptionFee, 
-                                  breaks=unique(quantile(animalAdoptionFee, probs=c(0,.25, .5,.75,1),include.lowest=T, na.rm=T)))
-ggsurv(survfit(survival ~ animalAdoptionFee.cut , data=dogs), plot.cens=F)
-
-
-#current size not that influential
-dogs$animalSizeCurrent.cut <- cut(animalSizeCurrent, 
-                                  breaks=unique(quantile(animalSizeCurrent, probs=c(0,.25, .5,.75,1),include.lowest=T, na.rm=T)))
-ggsurv(survfit(survival ~ animalSizeCurrent.cut , data=dogs), plot.cens=F)
-
-
-#difference between small breeds and other; small breeds less desired (probably all the chihuahua)
-dogs$animalSizePotential.cut <- cut(animalSizePotential, 
-                                  breaks=unique(quantile(animalSizePotential, probs=c(0, .5,.75,1),include.lowest=T, na.rm=T)))
-ggsurv(survfit(survival ~ animalSizePotential.cut , data=dogs), plot.cens=F)
-
-
-
-names(dogs)
-
-
-
-results <- coxph(survival ~ animalAdoptionFee + animalAltered + animalBiggestPictures + animalBiggestVideos + animalDeclawed + 
-                   animalHousetrained + animalMicrochipped + animalMixedBreed + 
-                   animalNeedsFoster + animalNumPictures + animalNumVideos + 
-                   animalOKWithCats + animalOKWithDogs + animalOKWithKids + 
-                   animalSizeCurrent + animalSizePotential + 
-                   animalSpecialneeds + animalUptodate + age_at_start+ in_foster + Highly.Active + Not.Active + Slightly.Active + animalAlterUnknown + 
-                   animalDeclawedUnknown + animalMicrochippedUnknown + Adult + Baby + Senior + Young + 
-                   Large + Medium + Small + X.Large + Indoor.Only + Indoor.and.Outdoor + 
-                   Outdoor.Only + Aggressive + Cautious + Friendly + Protective + animalHousetrainedUnknown + 
-                   animalMixedBreedUnknown + animalOKWithCatsUnknown + animalOKWithDogsUnknown + 
-                   animalOKWithKidsUnknown + animalSpecialneedsUnknown + animalUptodateUnknown + 
-                   mostly_black + search_string_num_terms  
-                 sex_male + description_length, 
-                 data = dogs)
-summary(results)
-
-
-
-
+#ggsurv plot for prettier survival curves
 ggsurv <- function(s, CI = 'def', plot.cens = T, surv.col = 'gg.def',
                    cens.col = 'red', lty.est = 1, lty.ci = 2,
                    cens.shape = 3, back.white = F, xlab = 'Time',
@@ -326,3 +128,251 @@ ggsurv <- function(s, CI = 'def', plot.cens = T, surv.col = 'gg.def',
                    ylab, main)}
   pl
 }
+
+#load data
+dogs <- read.csv('/Users/tracylee/Documents/galvanize/capstone/data/clean_data_no_dummies.csv')
+attach(dogs)
+
+summary(dogs)
+
+# total survival curve
+dogs.surv <- survfit(Surv(time_range, adopted)~ 1, conf.type="none")
+ggsurv(dogs.surv, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+title(main="Rescue Dog Survival Curve")
+
+#limit to 1 year
+plot(dogs.surv, xlab="Days Available", ylab="Percent Remaining", xlim=c(0,365))
+title(main="Rescue Dog Survival Curve Within 1 Year")
+
+
+dogs$survival <- Surv(dogs$time_range, dogs$adopted)
+
+#altered curves - kinda different
+fit <- survfit(survival ~ animalAltered, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#declawed curves - kinda different; declawed too low should expunge
+fit <- survfit(survival ~ animalDeclawed, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#housetrained curves - no difference
+fit <- survfit(survival ~ animalHousetrained, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#microchipped curves - huge difference = most likely indicates a dog that has an owner who will come looking for him/her
+fit <- survfit(survival ~ animalMicrochipped, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#ok with cats curves - no difference
+fit <- survfit(survival ~ animalOKWithCats, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#ok with dogs curves - significant difference
+fit <- survfit(survival ~ animalOKWithDogs, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#ok with kids curves - little difference
+fit <- survfit(survival ~ animalOKWithKids, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#specialneeds curves - little difference
+fit <- survfit(survival ~ animalSpecialneeds, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#in foster curves - some difference
+fit <- survfit(survival ~ in_foster , data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#mixedbreed curves - initially no difference
+fit <- survfit(survival ~ animalMixedBreed, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#needs foster curves - little difference
+fit <- survfit(survival ~ animalNeedsFoster, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#activity curves -  difference - sedentary is bad
+fit <- survfit(survival ~ animalActivityLevel, data = dogs)
+plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(animalActivityLevel),
+  lty=1:5,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+#agegroup curves - difference in first 100 days
+fit <- survfit(survival ~ animalGeneralAge, data = dogs)
+plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(animalGeneralAge),
+  lty=1:5,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+#sizegroup curves - some difference; people really like medium dogs
+fit <- survfit(survival ~ animalGeneralSizePotential, data = dogs)
+plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(animalGeneralSizePotential),
+  lty=1:5,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+#newpeople curves - huge difference 
+fit <- survfit(survival ~ animalNewPeople, data = dogs)
+plot(fit, lty=1, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(animalNewPeople),
+  lty=1,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+#indoor outdoor curves - huge difference 
+fit <- survfit(survival ~ animalIndoorOutdoor, data = dogs)
+plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(animalIndoorOutdoor),
+  lty=1:5,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+#gender curves - literally no difference 
+fit <- survfit(survival ~ animalSex, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+#region curves - some difference 
+fit <- survfit(survival ~ region, data = dogs)
+plot(fit, lty=1:5, col = 2:6, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(region),
+  lty=1:5,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+#topic curves - 
+fit <- survfit(survival ~ desc_latent_topic, data = dogs)
+plot(fit, lty=1:10, col = 2:11, xlab="Days Available", ylab="Percent Remaining")
+legend(
+  "topright",
+  legend=unique(desc_latent_topic),
+  lty=1:5,
+  col=2:6,
+  horiz=FALSE,
+  bty='n')
+
+
+#mostly_black curves - literally no difference 
+fit <- survfit(survival ~ mostly_black, data = dogs)
+ggsurv(fit, xlab="Days Available", ylab="Percent Remaining", plot.cens=FALSE)
+
+
+
+names(dogs)
+
+#discretizing data
+dogs$animalBiggestPictures.cut <- cut(animalBiggestPictures, 
+                                      breaks=unique(quantile(animalBiggestPictures, probs=seq(0,1,.25),include.lowest=T, na.rm=T)))
+dogs$animalBiggestVideos.cut <- (dogs$animalBiggestVideos>0)+0
+dogs$description_length.cut <- cut(description_length, 
+                                   breaks=unique(quantile(description_length, probs=c(0,.5,.75,1),include.lowest=T)))
+
+#having high quality images helps
+ggsurv(survfit(survival ~ animalBiggestPictures.cut , data=dogs), plot.cens=F)
+
+# this field probably doesnt help
+ggsurv(survfit(survival ~ animalBiggestVideos.cut , data=dogs), plot.cens=F)
+
+# there may be a sweet spot for description length
+ggsurv(survfit(survival ~ description_length.cut , data=dogs), plot.cens=F)
+
+
+
+#num search terms seems insignificant
+dogs$search_string_num_terms.cut <- cut(search_string_num_terms, 
+                                   breaks=unique(quantile(search_string_num_terms, probs=c(0,.5,.75,1),include.lowest=T)))
+ggsurv(survfit(survival ~ search_string_num_terms.cut , data=dogs), plot.cens=F)
+
+#more pictures significantly improves adoption time
+dogs$animalNumPictures.cut <- cut(animalNumPictures, 
+                                        breaks=unique(quantile(animalNumPictures, probs=c(0,.5,.75,1),include.lowest=T, na.rm=T)))
+ggsurv(survfit(survival ~ animalNumPictures.cut , data=dogs), plot.cens=F)
+
+
+#having a video really helps
+dogs$animalNumVideos.cut <- cut(animalNumVideos, 
+                                  breaks=c(-1,0,8))
+ggsurv(survfit(survival ~ animalNumVideos.cut , data=dogs), plot.cens=F)
+
+
+#more pictures significantly improves adoption time
+dogs$animalAdoptionFee.cut <- cut(animalAdoptionFee, 
+                                  breaks=unique(quantile(animalAdoptionFee, probs=c(0,.25, .5,.75,1),include.lowest=T, na.rm=T)))
+ggsurv(survfit(survival ~ animalAdoptionFee.cut , data=dogs), plot.cens=F)
+
+
+#current size not that influential
+dogs$animalSizeCurrent.cut <- cut(animalSizeCurrent, 
+                                  breaks=unique(quantile(animalSizeCurrent, probs=c(0,.25, .5,.75,1),include.lowest=T, na.rm=T)))
+ggsurv(survfit(survival ~ animalSizeCurrent.cut , data=dogs), plot.cens=F)
+
+
+#difference between small breeds and other; small breeds less desired (probably all the chihuahua)
+dogs$animalSizePotential.cut <- cut(animalSizePotential, 
+                                  breaks=unique(quantile(animalSizePotential, probs=c(0, .5,.75,1),include.lowest=T, na.rm=T)))
+ggsurv(survfit(survival ~ animalSizePotential.cut , data=dogs), plot.cens=F)
+
+
+
+names(dogs)
+
+
+results <- coxph(survival ~  animalAdoptionFee + animalAltered +
+                   animalBiggestPictures +  animalGeneralAge + animalGeneralSizePotential +
+                   animalHousetrained + animalIndoorOutdoor + 
+                   animalMicrochipped+ animalNeedsFoster +
+                   animalNewPeople + animalNumPictures + animalNumVideos +
+                   animalOKWithDogs + animalOKWithKids +
+                  animalSex + animalSizeCurrent +
+                  animalSpecialneeds + animalUptodate +
+                   age_at_start + in_foster +
+                   description_length + desc_latent_topic
+                 + region + has_video + pitbull, data = dogs)
+summary(results)
+extractAIC(results)
+
+zph <- cox.zph(results)
+zph
+plot(zph, col=3, var=46)
+abline(h=0, lty=3, col=2)
+
+mresid <- resid(results, type='martingale')
+plot(mresid)
+
+dresid <- resid(results, type='deviance')
+plot(dresid)
+
+
+
+exponential <- survreg(Surv(dogs$time_range, dogs$adopted) ~ animalAltered + animalMicrochipped + animalOKWithDogs +
+                         in_foster + animalMixedBreed + animalActivityLevel +
+                         animalGeneralAge + animalGeneralSizePotential + animalNewPeople + 
+                         animalIndoorOutdoor + animalNumPictures + animalNumVideos + animalAdoptionFee,
+                       dist = 'exponential')
+summary(exponential)
+
+
+
+
+
