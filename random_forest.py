@@ -14,25 +14,30 @@ def feature_importances():
     plt.xlim([-1, 10])
     plt.show()
 
+
+def dummify(df, fields):
+    for i, field in enumerate(fields):
+        dummies = pd.get_dummies(df[field])
+        cols = dummies.columns.values
+        keep_cols = cols[1:]
+        new_cols = ['{}_{}'.format(field, col) for col in keep_cols]
+        df[new_cols] = dummies[keep_cols]
+        del df[field]
+    return df
+
 if __name__ == '__main__':
 
-    df = pd.read_csv('/Users/tracylee/raw_dogs/clean_without_text.csv')
-    df = df[df['adopted']==1]
-    df.drop(['adopted','censored', 'tempAge', 'has_url', 'sex_male',
-             u'animalBiggestVideos', 'animalOrgID'], axis=1, inplace=True)
+    df = pd.read_csv('data/data_no_desc.csv')
+    df = df[df['Adopted']==1]
+    df.drop(['Adopted','Censored', 'Has_url', 'OrgID', 'Color', 'LocationState',
+        'Breed', 'PrimaryBreed', 'SecondaryBreed', 'Start_Date', 'End_Date',
+        'SearchString'], axis=1, inplace=True)
+    df = dummify(df, ['ActivityLevel', 'GeneralAge', 'GeneralSizePotential', 'Housetrained',
+        'IndoorOutdoor', 'Microchipped','NewPeople', 'OKWithCats', 'OKWithDogs', 'OKWithKids', 'Region',
+        'Desc_Latent_Topic', 'Breed_Group', 'Sex'])
 
 
-    y = df.pop('time_range')
-    # df = df[[u'animalAdoptionFee', u'animalAltered',
-    #        u'animalMicrochipped', u'animalNumPictures', u'animalNumVideos',
-    #        u'animalOKWithDogs', u'animalSizePotential',
-    #        u'age_at_start', u'in_foster', u'Highly Active', u'Not Active', u'Slightly Active',
-    #        u'animalAlterUnknown',
-    #        u'animalMicrochippedUnknown', u'Adult', u'Baby', u'Senior', u'Young',
-    #        u'Large', u'Medium', u'Small', u'X-Large', u'Indoor Only',
-    #        u'Indoor and Outdoor', u'Outdoor Only',
-    #        u'animalOKWithDogsUnknown',  u'mostly_black',
-    #        u'search_string_num_terms', u'description_length']]
+    y = df.pop('Time')
     X = df.values
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
@@ -40,3 +45,15 @@ if __name__ == '__main__':
     rf = RandomForestRegressor(n_estimators=100)
     scores = cross_val_score(rf, X_train, y_train)
     print scores
+
+
+    param_grid = {"max_depth": [3, None],
+              "max_features": [1, 3, 10],
+              "min_samples_split": [1, 3, 10],
+              "min_samples_leaf": [1, 3, 10]}
+
+    # run grid search
+    grid_search = GridSearchCV(rf, param_grid=param_grid)
+    grid_search.fit(X_train, y_train)
+    print grid_search.best_score_
+    print gridsearch.best_params_

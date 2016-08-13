@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 def load_data():
     '''
@@ -171,12 +172,13 @@ def adoption_fee_parse(x):
         else:
             return np.nan
 
-def dummify(df, fields):
-    for field in fields:
+def dummify(df, fields, baselines):
+    for i, field in enumerate(fields):
         dummies = pd.get_dummies(df[field])
-        cols = dummies.columns
-        new_cols = [field + "_"+ col_name for col_name in cols]
-        df[cols] = dummies[cols]
+        cols = dummies.columns.values
+        keep_cols = cols[cols!=baselines[i]]
+        new_cols = [field + "_"+ col_name for col_name in keep_cols]
+        df[new_cols] = dummies[keep_cols]
         del df[field]
     return df
 
@@ -255,6 +257,26 @@ def breed_groups(df):
     return df
 
 
+def impute_nan_size_and_age(df):
+    df['tempAgeSize'] = df['GeneralAge'] + df['GeneralSizePotential']
+    temp = df[['tempAgeSize', 'SizeCurrent', 'SizePotential']].groupby(['tempAgeSize']).agg(['mean'])
+    temp.reset_index()
+    temp.columns = temp.columns.get_level_values(0)
+    temp.columns = ['tempAgeSize', 'SizeCurrent_mean', 'SizePotential_mean']
+    result = pd.merge(test_df, temp, how='left', on=['tempAgeSize'])
+    result['SizeCurrent'].fillna(result['SizeCurrent_mean'], inplace=True)
+    result['SizePotential'].fillna(result['SizePotential_mean'], inplace=True)
+
+    temp2 = df[['GeneralAge','Age_at_Start']].groupby(['GeneralAge']).agg(['mean'])
+    temp2.reset_index()
+    temp2.columns = temp2.columns.get_level_values(0)
+    temp2.columns = ['GeneralAge', 'Age_at_Start_mean']
+    result2 = pd.merge(result, temp2, how='left', on=['GeneralAge'])
+    result2['Age_at_Start'].fillna(result2['Age_at_Start_mean'],inplace=True)
+
+    result2.drop(['tempAgeSize', 'SizeCurrent_mean', 'SizePotential_mean', 'Age_at_Start_mean'], axis=1)
+
+    return result2
 
 if __name__ == '__main__':
     df = load_data()
@@ -269,7 +291,9 @@ if __name__ == '__main__':
     #                         'animalOKWithDogs', 'animalOKWithKids', 'animalSpecialneeds', 'animalUptodate'])
     df = fill_na_mean(df, ['animalNumPictures', 'animalNumVideos'])
     df = fill_na_10000(df, ['animalSizeCurrent', 'animalSizePotential'])
+    df['AdoptionFee'] = df['AdoptionFee'].apply(lambda x: adoption_fee_parse(x))
     df['mostly_black'] = df['animalColor'].apply(lambda x: 1 if str(x)[:5]=='Black' else 0)
     df['region'] = df['animalLocationState'].apply(lambda x: state_to_region(x))
     df['search_string_num_terms'] = df['animalSearchString'].apply(lambda x: len(str(x).split()))
     df['description_length'] = df['animalDescriptionPlain'].apply(lambda x: len(str(x)))
+    df = impute_nan_size_and_age(df)
