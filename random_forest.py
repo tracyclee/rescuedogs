@@ -42,7 +42,8 @@ if __name__ == '__main__':
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33)
 
-    rf = RandomForestRegressor(n_estimators=100)
+    rf = RandomForestRegressor(n_estimators=500,
+        min_samples_split= 1, max_depth= None, min_samples_leaf= 1)
     scores = cross_val_score(rf, X_train, y_train)
     print scores
 
@@ -56,4 +57,4 @@ if __name__ == '__main__':
     grid_search = GridSearchCV(rf, param_grid=param_grid)
     grid_search.fit(X_train, y_train)
     print grid_search.best_score_
-    print gridsearch.best_params_
+    print grid_search.best_params_

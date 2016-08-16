@@ -142,6 +142,7 @@ abline(h=.3, lty = 2, col = 3)
 title(main="Rescue Dog Survival Curve")
 
 #limit to 1 year
+plot.new()
 yearplot <- ggsurv(dogs.surv, xlab="Days Available", ylab="Percent Remaining", plot.cens=F)
 yearplot  + coord_cartesian(xlim = c(0, 365))
 abline(h=.27, lty = 2, col = 3)
@@ -352,6 +353,8 @@ results <- coxph(survival ~  Breed_Group
 summary(results)
 extractAIC(results)
 
+
+
 #FORWARD STEP AIC MODEL FEATURE SELECTION
 
 
@@ -381,8 +384,6 @@ extractAIC(results)
 survfit(results,newdata= dogs)
 
 
-library(CoxBoost)
-
 zph <- cox.zph(results)
 zph
 plot(zph, col=3, var=46)
@@ -393,17 +394,5 @@ plot(mresid)
 
 dresid <- resid(results, type='deviance')
 plot(dresid)
-
-
-
-exponential <- survreg(Surv(dogs$time_range, dogs$adopted) ~ Altered + Microchipped + OKWithDogs +
-                         in_foster + MixedBreed + ActivityLevel +
-                         GeneralAge + GeneralSizePotential + NewPeople + 
-                         IndoorOutdoor + NumPictures + NumVideos + AdoptionFee,
-                       dist = 'exponential')
-summary(exponential)
-
-
-
 
 
