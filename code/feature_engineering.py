@@ -21,6 +21,12 @@ def load_data():
 
 
 def fewer_files(start, end):
+    '''
+    INPUT: int, int
+    OUTPUT: df
+
+    Reads in csvs and concatenates them into one dataframe.
+    '''
     date_fields = [u'animalAdoptedDate','animalAvailableDate', u'animalBirthdate',
                 u'animalFoundDate', u'animalKillDate',u'animalUpdatedDate']
     df = pd.read_csv('/Users/tracylee/raw_dogs/{}.csv'.format(start), parse_dates=date_fields)
@@ -34,6 +40,9 @@ def fewer_files(start, end):
 
 def orgs_of_interest(df):
     '''
+    INPUT: df
+    OUTPUT: df
+
     Returns list of orgs that meet the basic criteria of having 10,000 lines of data
     '''
     org_df = df['animalOrgID'].value_counts()
@@ -45,6 +54,9 @@ def orgs_of_interest(df):
 
 def start_end_date(df):
     '''
+    INPUT: df
+    OUTPUT: df
+
     Add columns for a start date and an end date.
     '''
     df['start_date'] = df.apply(start_date,axis=1)
@@ -55,6 +67,13 @@ def start_end_date(df):
 
 
 def date_time(x):
+    '''
+    INPUT: string
+    OUTPUT: datetime object
+
+    Converts non-nans dates into datetime objects
+    '''
+
     try:
         return pd.to_datetime(x)
     except:
@@ -63,6 +82,9 @@ def date_time(x):
 
 def start_date(row):
     '''
+    INPUT: row
+    OUTPUT: datetime object
+
     Selects a start date from either the animal available date or animal found date.
     '''
     try:
@@ -87,6 +109,9 @@ def start_date(row):
 
 def end_date(row):
     '''
+    INPUT: row
+    OUTPUT: datetime object
+
     Selects an end date from either the adopt date or kill date.
     '''
     try:
@@ -107,6 +132,9 @@ def end_date(row):
 
 def impute_dates_all(df, orgs_of_interest):
     '''
+    INPUT: df, list
+    OUTPUT: df
+
     Impute dates for each org, one by one.
     '''
     temp_df = impute_dates_one(df,orgs_of_interest[0])
@@ -119,6 +147,9 @@ def impute_dates_all(df, orgs_of_interest):
 
 def impute_dates_one(df, org):
     '''
+    INPUT: df, string
+    OUTPUT: df
+
     Impute dates for one org.
     '''
     temp_df = df[df['animalOrgID']==org]
@@ -145,6 +176,9 @@ def impute_dates_one(df, org):
 
 def middle_date(row):
     '''
+    INPUT: row
+    OUTPUT: datetime object
+
     Calculates the midpoint between two dates.
     '''
     lower = row['start_lower']
@@ -153,7 +187,10 @@ def middle_date(row):
 
 def labels(df):
     '''
-    Create labels.
+    INPUT: df
+    OUTPUT: df
+
+    Create labels for killed, adopted, censored, and the time
     '''
     df['killed'] = df[u'animalKillDate'].apply(lambda x: 0 if pd.isnull(x) else 1)
     df['adopted']= df['animalStatus'].apply(lambda x: 1 if x=='Adopted' else 0)
@@ -163,6 +200,12 @@ def labels(df):
     return df
 
 def adoption_fee_parse(x):
+    '''
+    INPUT: string
+    OUTPUT: float
+
+    Parses the adoption fee column for total adoption fees.
+    '''
     if pd.isnull(x):
         return np.nan
     else:
@@ -173,6 +216,13 @@ def adoption_fee_parse(x):
             return np.nan
 
 def dummify(df, fields, baselines):
+    '''
+    INPUT: df, list, list
+    OUTPUT: df
+
+    Accepts a dataframe, a list of fields to be dummified, and the baselines
+    for those fields and returns a new dataframe with dummified columns.
+    '''
     for i, field in enumerate(fields):
         dummies = pd.get_dummies(df[field])
         cols = dummies.columns.values
@@ -183,27 +233,57 @@ def dummify(df, fields, baselines):
     return df
 
 def add_unknown_column(df, fields):
+    '''
+    INPUT: df, list
+    OUTPUT: df
+
+    Accepts a dataframe, a list of fields to have nans imputed with 'Unknown'
+    '''
     for field in fields:
         df[field+'Unknown']=df[field].apply(lambda x: 1 if pd.isnull(x) else 0)
         df[field].fillna(0,inplace=True)
     return df
 
 def fill_na_mean(df, fields):
+    '''
+    INPUT: df, list
+    OUTPUT: df
+
+    Accepts a dataframe and a list of fields to have nans imputed with the column's mean value
+    '''
     for field in fields:
         df[field].fillna(df[field].mean(), inplace=True)
     return df
 
 def fill_na_mode(df, fields):
+    '''
+    INPUT: df, list
+    OUTPUT: df
+
+    Accepts a dataframe and a list of fields to have nans imputed with the column's mode value
+    '''
     for field in fields:
         df[field].fillna(df[field].mode(), inplace=True)
     return df
 
 def fill_na_10000(df, fields):
+    '''
+    INPUT: df, list
+    OUTPUT: df
+
+    Accepts a dataframe and a list of fields to have nans imputed with 10000
+    '''
     for field in fields:
         df[field].fillna(10000, inplace=True)
     return df
 
 def fill_with_unknown(df):
+    '''
+    INPUT: df
+    OUTPUT: df
+
+    Accepts a dataframe and fills nans with 'Unknown'
+    '''
     fill_with_unknown= ['animalActivityLevel', u'animalGeneralAge', u'animalGeneralSizePotential',
             u'animalIndoorOutdoor',u'animalNewPeople',
             u'animalPrimaryBreed',
@@ -213,6 +293,13 @@ def fill_with_unknown(df):
     return df
 
 def state_to_region(x):
+    '''
+    INPUT: string
+    OUTPUT: string
+
+    Relates the state to the designated region.
+    '''
+
     West = ['CA','UT','WY','MT', 'OR','WA',
             'CO','AZ','NM','NV', 'AK', 'ID']
     Midwest = ['IL','MI','IN','MO', 'MN','KS',
@@ -232,6 +319,13 @@ def state_to_region(x):
             return region_names[i]
 
 def breed_groups(df):
+    '''
+    INPUT: df
+    OUTPUT: df
+
+    Relates the breed to the designated group.
+    '''
+
     df['pitbull']=df[u'animalBreed'].apply(lambda x: 1 if 'pit bull' in x.lower()
                                                    else 1 if 'bull terrier' in x.lower()
                                                    else 1 if 'staffordshire' in x.lower()
@@ -258,6 +352,14 @@ def breed_groups(df):
 
 
 def impute_nan_size_and_age(df):
+    '''
+    INPUT: df
+    OUTPUT: df
+
+    Imputes nan values for size and age based on the means for a particular
+    combination of general size and general age.
+    '''
+
     df['tempAgeSize'] = df['GeneralAge'] + df['GeneralSizePotential']
     temp = df[['tempAgeSize', 'SizeCurrent', 'SizePotential']].groupby(['tempAgeSize']).agg(['mean'])
     temp.reset_index()

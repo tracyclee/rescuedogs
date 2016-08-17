@@ -4,6 +4,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD, NMF
 
 def describe_nmf_results(document_term_mat, W, H, n_top_words = 15):
+    '''
+    INPUT: matrix, matrix, matrix, int
+    OUTPUT: none
+
+    Prints out the topic and top 15 words associated to that topic.
+    '''
     # print("Reconstruction error: %f") %(reconst_mse(document_term_mat, W, H))
     for topic_num, topic in enumerate(H):
         print("Topic %d:" % topic_num)
@@ -31,6 +37,9 @@ if __name__ == '__main__':
     df['desc_latent_topic'] = labels
 
     '''
+    TFIDF - NMF results:
+
+    
     Topic 0:
     nbsp adoption submit fee application foster animals pet amp age homes puppies information dogs prevention
     Topic 1:

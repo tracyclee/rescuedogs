@@ -6,6 +6,9 @@ from sklearn.cross_validation import train_test_split, cross_val_score
 
 
 def feature_importances():
+    '''
+    Plots feature importances of the random forest.
+    '''
     plt.figure()
     plt.title("Feature importances")
     plt.bar(range(10), importances[indices[-10:]], color="r", align="center")
@@ -16,6 +19,12 @@ def feature_importances():
 
 
 def dummify(df, fields):
+    '''
+    INPUT: df, list
+    OUTPUT: df
+
+    Dummifies designated categorical fields for random forest.
+    '''
     for i, field in enumerate(fields):
         dummies = pd.get_dummies(df[field])
         cols = dummies.columns.values

@@ -7,6 +7,12 @@ import seaborn as sns
 
 
 def time_histogram(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates histogram of times.
+    '''
     plt.hist(df['time_range'], normed=1, bins=500, alpha=0.4, edgecolor='none')
     plt.xlim(0,100)
     plt.title('Time Distribution')
@@ -16,6 +22,12 @@ def time_histogram(df):
 
 
 def plot_breed_trends(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates boxplots of times by breed.
+    '''
     top_20_breeds = df['animalPrimaryBreed'].value_counts().index[:20]
     plt.subplots(figsize=(15, 8))
     lst = [df[df['animalPrimaryBreed']==breed]['time_range'] for breed in top_20_breeds]
@@ -27,6 +39,12 @@ def plot_breed_trends(df):
     plt.show()
 
 def plot_pitbull(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates boxplots of times by pitbulls vs all and others.
+    '''
     plt.subplots(figsize=(15, 8))
     lst = [df['time_range'], df[df['pitbull']==1]['time_range'], df[df['pitbull']==0]['time_range']]
     plt.boxplot(lst, labels=['All', 'Pit Bull Family', 'Other'])
@@ -37,6 +55,12 @@ def plot_pitbull(df):
     plt.show()
 
 def plot_color_trends(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates boxplots of times by black vs all and others.
+    '''
     plt.subplots(figsize=(15, 8))
     lst = [df['time_range'], df[df['mostly_black']==1]['time_range'], df[df['mostly_black']==0]['time_range']]
     plt.boxplot(lst, labels=['All', 'Black', 'Other Color'])
@@ -46,6 +70,12 @@ def plot_color_trends(df):
     plt.xticks(fontsize=14)
 
 def plot_all_region_trends(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates boxplots of time by regions.
+    '''
     region_names = ['West', 'Midwest', 'South', 'Northeast', 'Canada']
     regions = ["{}\n{}".format(region, df[df['region']==region]['time_range'].count())
                for region in region_names]
@@ -60,6 +90,12 @@ def plot_all_region_trends(df):
     plt.show()
 
 def plot_one_region(df, region_name, region_states):
+    '''
+    INPUT: df, string, list
+    OUTPUT: none
+
+    Creates boxplots of time by the states within a designated region.
+    '''
     regions = ["{}\n{}".format(region, df[df['animalLocationState']==region]['time_range'].count())
                for region in region_states]
     plt.subplots(figsize=(15, 8))
@@ -73,6 +109,13 @@ def plot_one_region(df, region_name, region_states):
     plt.show()
 
 def plot_age_groups(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates bar graphs of perecent of animal by age that enter shelters.
+    '''
+
     objects = ['Baby', 'Young', 'Adult', 'Senior', 'Unknown']
     y_pos = np.arange(len(objects))
     performance = [1.*(df['animalGeneralAge']==object).sum()/df.shape[0] for object in objects]
@@ -85,6 +128,13 @@ def plot_age_groups(df):
     plt.title('Age Groups', fontsize=24)
 
 def median_records_scatter(df):
+    '''
+    INPUT: df
+    OUTPUT: none
+
+    Creates scatter chart of organizations by number of records and median duration of dog.
+    '''
+
     df['animalLocationState'] = df['animalLocationState']
     temp = df[['animalOrgID','animalLocationState','time_range']].groupby(['animalOrgID','animalLocationState',]).agg(['median', 'count'])
     temp = temp.reset_index()
