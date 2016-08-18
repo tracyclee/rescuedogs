@@ -51,6 +51,10 @@ On the other hand, the survival curves for black and non-black dogs are virtuall
 
 To get a clearer idea of how individual features affect the time to event, I turned to the Cox Proportional Hazards model, a semi-parametric survival model. CoxPH measures the affect of covariates against the baseline hazard rate. CoxPH assumes the effects of the predictor variables upon survival are constant over time and are additive in one scale. My final model was created via stepwise feature selection in consultation with Akaike information criterion, given the profundity of features.
 
+
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/cox_results.png"></p>
+
+
 The high interpretability of the CoxPH model gives us insight into how rescues can be more effective in their resource allocation. Eminently feasible attributes include:
 * Having a video
 * Microchipping
@@ -64,7 +68,7 @@ The model also helps identify at-risk populations. We can see that Pitbulls and 
 ##Random Forest
 However, what if a rescue just wanted to know how long it would be, and didn't care about probabilities? I built an additional random forest to predict the number of days it would take for a dog to be adopted. Knowing the duration itself could have implications on budgeting, fundraising, and even fostering.
 
-<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/rf_results.jpg"></p>
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/rf_results.png"></p>
 
 
 
