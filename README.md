@@ -1,5 +1,6 @@
 # Stay!
 Investigating Rescue Dogs Dataset
+
 Tracy Lee, August 2016
 
 ##Contents:
