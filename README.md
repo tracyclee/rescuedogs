@@ -14,7 +14,7 @@ This projects begs the question: how can we use publicly available data to help 
 
 This project has personal significance for me because of this gorgeous girl, who would have been euthanized if I hadn't adopted her. She is the most beautiful and perfect dog in the world.
 
-<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/tess.jpg" width="300"></p>
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/tess.jpg" width="450"></p>
 
 With this information, we can optimize the already stretched thin resources that non-profits usually struggle. We can confirm that some widely held beliefs are true, while others are not. And, we can also identify great groups who can lead others by example or can shoulder some additional burden.
 
@@ -41,11 +41,11 @@ I was also curious after viewing a few rescue websites as to whether or not some
 ##Survival Analysis
 Survival analysis, in brief, encompasses a number of models that analyze how long it will take until an event occurs. I started by modeling the survival curves of my data through Kaplan-Meier estimates. Kaplan-Meier is a non-parametric model of the time to event, whose advantage lies in its incorporation of censored data. The resulting survival curve plots the probability of duration exceeding a specific time.
 
-![Pitbull Survival Curves](https://github.com/tracyclee/rescuedogs/blob/master/images/survival_curve_pitbull.jpeg)
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/survival_curve_pitbull.jpeg"></p>
 
 For example, in this curve, about 63% of pitbulls are expected to be adopted within a 500 days of being up for adoption, but all else being equal, 75% of non-pitbulls would be expected to be adopted in that same time frame.
 
-![Black Dog Survival Curves](https://github.com/tracyclee/rescuedogs/blob/master/images/survival_curve_black.jpeg)
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/survival_curve_black.jpeg"></p>
 
 On the other hand, the survival curves for black and non-black dogs are virtually indistinguishable. This contradicts the idea of "Black Dog Syndrome"--a widely held belief by shelter workers that black dogs are more disadvantaged than dogs of lighter colors.
 
@@ -64,7 +64,8 @@ The model also helps identify at-risk populations. We can see that Pitbulls and 
 ##Random Forest
 However, what if a rescue just wanted to know how long it would be, and didn't care about probabilities? I built an additional random forest to predict the number of days it would take for a dog to be adopted. Knowing the duration itself could have implications on budgeting, fundraising, and even fostering.
 
-![Random Forest](https://github.com/tracyclee/rescuedogs/blob/master/images/rf_results.tiff)
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/rf_results.tiff"></p>
+
 
 
 ##Future
