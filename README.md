@@ -1,6 +1,5 @@
 # Stay!
-##Investigating Rescue Dogs Dataset
-
+Investigating Rescue Dogs Dataset
 Tracy Lee, August 2016
 
 ##Contents:
@@ -15,7 +14,7 @@ This projects begs the question: how can we use publicly available data to help 
 
 This project has personal significance for me because of this gorgeous girl, who would have been euthanized if I hadn't adopted her. She is the most beautiful and perfect dog in the world.
 
-![Tess](https://github.com/tracyclee/rescuedogs/blob/master/images/tess.jpg =300x)
+![Tess](/images/tess.jpg =300x)
 
 With this information, we can optimize the already stretched thin resources that non-profits usually struggle. We can confirm that some widely held beliefs are true, while others are not. And, we can also identify great groups who can lead others by example or can shoulder some additional burden.
 
