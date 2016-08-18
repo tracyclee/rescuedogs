@@ -8,9 +8,8 @@ from os import path
 import csv
 
 
-def request_to_csv(i, batch_size):
+def request_to_csv(i, batch_size, api_key):
     link = "https://api.rescuegroups.org/http/v2.json"
-    api_key = 'ZJJi3YFv'
 
     kept_fields = [u'animalActivityLevel',"animalSizeUOM", u'animalAdoptedDate',
                u'animalAdoptionFee', u'animalAdoptionPending', u'animalAltered', u'animalAvailableDate',
@@ -93,4 +92,4 @@ if __name__ == '__main__':
     trial = 501
 
     for num in range(trial, num_batches):
-        request_to_csv(num, batch_size)
+        request_to_csv(num, batch_size, api_key)
