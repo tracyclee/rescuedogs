@@ -64,7 +64,7 @@ The model also helps identify at-risk populations. We can see that Pitbulls and 
 ##Random Forest
 However, what if a rescue just wanted to know how long it would be, and didn't care about probabilities? I built an additional random forest to predict the number of days it would take for a dog to be adopted. Knowing the duration itself could have implications on budgeting, fundraising, and even fostering.
 
-<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/rf_results.tiff"></p>
+<p align="center"><img src="https://github.com/tracyclee/rescuedogs/blob/master/images/rf_results.jpg"></p>
 
 
 
